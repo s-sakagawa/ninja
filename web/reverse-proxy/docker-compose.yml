@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  tuna:
+    image: nginx
+    container_name: 'tuna'
+    volumes:
+      - ./tuna:/usr/share/nginx/html
+    ports:
+      - 7001:80
+
+  salmon:
+    image: nginx
+    container_name: 'salmon'
+    volumes:
+      - ./salmon:/usr/share/nginx/html
+    ports:
+      - 7002:80
+
+  sushi:
+    image: nginx
+    volumes:
+      - ./sushi/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80

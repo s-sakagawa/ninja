@@ -12,17 +12,25 @@ import (
 	qrcode "github.com/skip2/go-qrcode"
 )
 
-func main() {
-	issuer := "Example"
-	account := "go@example.com"
-	key := "JBSWY3DPEHPK3PXP"
-	uri := Uri(issuer, account, key)
+type Params struct {
+	issuer  string
+	account string
+	key     string
+}
 
-	err := qrcode.WriteFile(uri, qrcode.Medium, 256, "./qr.png")
+func main() {
+	params := Params{
+		issuer:  "Example",
+		account: "go@example.com",
+		key:     "JBSWY3DPEHPK3PXP",
+	}
+	uri := Uri(params)
+
+	err := qrcode.WriteFile(uri, qrcode.Medium, 256, "./qrcode/qr.png")
 	if err != nil {
 		fmt.Println("Error: Failed to generate QR code")
 	} else {
-		Authentication(key)
+		Authentication(params.key)
 	}
 }
 
@@ -64,22 +72,22 @@ func truncate(hs []byte) int {
 	return (int(binary.BigEndian.Uint32(p)) & 0x7FFFFFFF) % 1000000
 }
 
-func Uri(issuer string, account string, key string) string {
+func Uri(params Params) string {
 	var uri strings.Builder
 	uri.WriteString("otpauth://totp/")
-	uri.WriteString(issuer)
+	uri.WriteString(params.issuer)
 	uri.WriteString(":")
-	uri.WriteString(account)
+	uri.WriteString(params.account)
 	uri.WriteString("?secret=")
-	uri.WriteString(key)
+	uri.WriteString(params.key)
 	uri.WriteString("&issuer=")
-	uri.WriteString(issuer)
+	uri.WriteString(params.issuer)
 
 	return uri.String()
 }
 
 func Authentication(k string) {
-	fmt.Println("Scan the generated QR code.")
+	fmt.Println("Scan the generated QR code")
 	for i := 0; ; i++ {
 		var input int
 		fmt.Print("Enter your One Time Password: ")
@@ -92,7 +100,8 @@ func Authentication(k string) {
 				break
 			} else {
 				fmt.Print("Password does not match, ")
-				if i < 3 {
+				// Limit trials to three
+				if i < 2 {
 					fmt.Println("please try again")
 					continue
 				} else {

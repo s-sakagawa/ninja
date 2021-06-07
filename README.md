@@ -11,3 +11,4 @@ Simple implementation of various codes
     - [Variational Auto-Encoder (VAE)](./ML/vae)
 - Web
     - [Nginx reverse proxy](./web/reverse-proxy)
+    - [Time-based One-Time Password (TOTP)](./web/totp)
